@@ -15,6 +15,8 @@ namespace ObjectListViewSample
         public Form1()
         {
             InitializeComponent();
-        }
+
+            Shown += (sender, args) => new Form2().Show();
+        } 
     }
 }

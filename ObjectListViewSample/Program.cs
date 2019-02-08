@@ -8,6 +8,8 @@ namespace ObjectListViewSample
 {
     static class Program
     {
+        public static readonly string AppDir = AppContext.BaseDirectory + "/";
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
