@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Employee.cs" />
     <Compile Include="FileSystemItem.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\ShellHelper.cs" />
     <Compile Include="Form1.cs">

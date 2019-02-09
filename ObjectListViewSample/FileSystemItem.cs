@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ObjectListViewSample.Helpers;
 
 namespace ObjectListViewSample
 {
@@ -39,6 +40,8 @@ namespace ObjectListViewSample
         }
 
         public string ParentFullPath => _parent?.FullPath;
+
+        public FileSystemItem Parent => _parent;
 
         public bool IsRoot => _parent == null;
 
@@ -87,6 +90,23 @@ namespace ObjectListViewSample
             Directory.Move(FullPath, newFullPath);
 
             Name = newName;
+        }
+
+        public void Delete()
+        {
+            if (IsRoot || !FileHelper.FileOrDirExists(FullPath))
+                return;
+
+            if (IsDir)
+            {
+                FileHelper.DeleteDirWithFiles(FullPath);
+            }
+            else
+            {
+                File.Delete(FullPath);
+            }
+
+            _parent._children = null; // need to refresh
         }
 
         public override string ToString()

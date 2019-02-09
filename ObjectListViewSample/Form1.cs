@@ -54,6 +54,7 @@ namespace ObjectListViewSample
                     return new List<FileSystemItem>();
                 }
             };
+            tvFilesystem.ParentGetter = obj => ((FileSystemItem) obj).Parent;
 
             _tpcolName.ImageGetter = GetIconKey;
 
@@ -100,7 +101,7 @@ namespace ObjectListViewSample
                 }
 
                 string newFullPath = Path.Combine(fsItem.ParentFullPath, newName);
-                if (File.Exists(newFullPath) || Directory.Exists(newFullPath))
+                if (FileHelper.FileOrDirExists(newFullPath))
                 {
                     MessageBox.Show($"{newName} already exists in {fsItem.ParentFullPath}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -143,6 +144,31 @@ namespace ObjectListViewSample
             }
 
             imageList.Images.Add(key, ImageHelper.Resize(icon.ToBitmap(), imageList.ImageSize));
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            var items = tvFilesystem.CheckedObjects;
+
+            if (MessageBox.Show("Do you want to delete selected files?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                return;
+
+            try
+            {
+                foreach (FileSystemItem item in items)
+                {
+                    if (item.IsRoot) 
+                        continue;
+
+                    item.Delete();
+
+                    tvFilesystem.RemoveObject(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
