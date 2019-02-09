@@ -7,31 +7,40 @@ namespace ObjectListViewSample
 {
     class FileSystemItem : ObservableObject
     {
+        private string _name;
+        private FileSystemItem _parent;
         private List<FileSystemItem> _children;
-        private string _fullPath;
 
-        public FileSystemItem(string fullPath)
+        public FileSystemItem(string rootPath)
         {
-            FullPath = fullPath;
+            Name = rootPath;
             IsDir = Directory.Exists(FullPath);
-            IsRoot = new DirectoryInfo(fullPath).Parent == null;
         }
 
-        public string FullPath
+        private FileSystemItem(FileSystemItem parent, string name)
         {
-            get => _fullPath;
+            _parent = parent;
+            Name = name;
+            IsDir = Directory.Exists(FullPath);
+        }
+
+        public string FullPath => _parent == null ? Name : Path.Combine(ParentFullPath, Name);
+
+        public string Name
+        {
+            get => _name;
             private set
             {
-                SetField(ref _fullPath, value);
-                OnPropertyChanged(nameof(Name));
+                SetField(ref _name, value);
+                OnPropertyChanged(nameof(FullPath));
+
+                UpdateChildren();
             }
         }
 
-        public string Name => IsRoot? FullPath : Path.GetFileName(FullPath);
+        public string ParentFullPath => _parent?.FullPath;
 
-        public string ParentPath => IsRoot ? null : Path.GetDirectoryName(FullPath);
-
-        public bool IsRoot { get; }
+        public bool IsRoot => _parent == null;
 
         public bool IsDir { get; }
 
@@ -54,7 +63,7 @@ namespace ObjectListViewSample
                 }
 
                 _children = Directory.GetFileSystemEntries(FullPath)
-                    .Select(filePath => new FileSystemItem(filePath))
+                    .Select(filePath => new FileSystemItem(this, Path.GetFileName(filePath)))
                     .ToList();
 
                 return _children;
@@ -73,17 +82,30 @@ namespace ObjectListViewSample
                 return;
             }
 
-            string newFullPath = Path.Combine(ParentPath, newName);
+            string newFullPath = Path.Combine(ParentFullPath, newName);
 
             Directory.Move(FullPath, newFullPath);
 
-            FullPath = newFullPath;
-            _children = null;
+            Name = newName;
         }
 
         public override string ToString()
         {
             return Name;
+        }
+
+        // probably not really needed since we don't bind to full paths
+        private void UpdateChildren()
+        {
+            if (_children == null)
+                return;
+
+            foreach (var child in _children)
+            {
+                child.OnPropertyChanged(nameof(FullPath));
+                child.OnPropertyChanged(nameof(ParentFullPath));
+                child.UpdateChildren();
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -99,10 +99,10 @@ namespace ObjectListViewSample
                     return;
                 }
 
-                string newFullPath = Path.Combine(fsItem.ParentPath, newName);
+                string newFullPath = Path.Combine(fsItem.ParentFullPath, newName);
                 if (File.Exists(newFullPath) || Directory.Exists(newFullPath))
                 {
-                    MessageBox.Show($"{newName} already exists in {fsItem.ParentPath}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"{newName} already exists in {fsItem.ParentFullPath}.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
