@@ -73,6 +73,13 @@ namespace ObjectListViewSample
             }
         }
 
+        private int _progress;
+        public int Progress // not used (only for dummy progress bar demo)
+        {
+            get => _progress;
+            set => SetField(ref _progress, value);
+        }
+
         public void Rename(string newName)
         {
             if (IsRoot)

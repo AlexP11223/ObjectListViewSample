@@ -49,6 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarTextRenderer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Employee.cs" />
     <Compile Include="FileSystemItem.cs" />
     <Compile Include="Helpers\FileHelper.cs" />

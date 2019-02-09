@@ -35,6 +35,8 @@
             this.colLastWriteTime = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imglstIcons = new System.Windows.Forms.ImageList(this.components);
             this.btnRemove = new System.Windows.Forms.Button();
+            this.colProgress = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.btnProcess = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tvFilesystem)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,10 +45,11 @@
             this.tvFilesystem.AllColumns.Add(this.colName);
             this.tvFilesystem.AllColumns.Add(this.colSize);
             this.tvFilesystem.AllColumns.Add(this.colLastWriteTime);
+            this.tvFilesystem.AllColumns.Add(this.colProgress);
             this.tvFilesystem.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tvFilesystem.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClickAlways;
+            this.tvFilesystem.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.DoubleClick;
             this.tvFilesystem.CellEditUseWholeCell = false;
             this.tvFilesystem.CheckBoxes = true;
             this.tvFilesystem.CheckedAspectName = "";
@@ -55,6 +58,7 @@
             this.colSize,
             this.colLastWriteTime});
             this.tvFilesystem.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tvFilesystem.FullRowSelect = true;
             this.tvFilesystem.HierarchicalCheckboxes = true;
             this.tvFilesystem.Location = new System.Drawing.Point(13, 55);
             this.tvFilesystem.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -72,6 +76,7 @@
             this.tvFilesystem.UseTranslucentSelection = true;
             this.tvFilesystem.View = System.Windows.Forms.View.Details;
             this.tvFilesystem.VirtualMode = true;
+            this.tvFilesystem.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.tvFilesystem_ItemChecked);
             // 
             // colName
             // 
@@ -110,11 +115,30 @@
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
+            // colProgress
+            // 
+            this.colProgress.AspectName = "Progress";
+            this.colProgress.DisplayIndex = 3;
+            this.colProgress.IsVisible = false;
+            this.colProgress.Text = "Progress";
+            this.colProgress.Width = 120;
+            // 
+            // btnProcess
+            // 
+            this.btnProcess.Location = new System.Drawing.Point(608, 16);
+            this.btnProcess.Name = "btnProcess";
+            this.btnProcess.Size = new System.Drawing.Size(204, 31);
+            this.btnProcess.TabIndex = 5;
+            this.btnProcess.Text = "Process something";
+            this.btnProcess.UseVisualStyleBackColor = true;
+            this.btnProcess.Click += new System.EventHandler(this.btnProcess_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(830, 574);
+            this.Controls.Add(this.btnProcess);
             this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.tvFilesystem);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -136,6 +160,8 @@
         private BrightIdeasSoftware.OLVColumn colLastWriteTime;
         private System.Windows.Forms.ImageList imglstIcons;
         private System.Windows.Forms.Button btnRemove;
+        private BrightIdeasSoftware.OLVColumn colProgress;
+        private System.Windows.Forms.Button btnProcess;
     }
 }
 

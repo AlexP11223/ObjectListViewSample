@@ -24,22 +24,24 @@ namespace ObjectListViewSample
         {
             InitializeComponent();
 
-            //Shown += (sender, args) => new Form2().Show();
+            Shown += (sender, args) => new Form2().Show();
 
             _tptvFilesystem = new TypedObjectListView<FileSystemItem>(tvFilesystem);
             _tpcolName = _tptvFilesystem.GetColumn("Name");
 
             SetupFsTreeView();
+
+            UpdateControlsState();
         }
 
         private void SetupFsTreeView()
         {
-            tvFilesystem.CanExpandGetter = obj => ((FileSystemItem) obj).IsDir;
+            tvFilesystem.CanExpandGetter = obj => ((FileSystemItem)obj).IsDir;
             tvFilesystem.ChildrenGetter = obj =>
             {
                 try
                 {
-                    return ((FileSystemItem) obj).Children;
+                    return ((FileSystemItem)obj).Children;
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -54,7 +56,7 @@ namespace ObjectListViewSample
                     return new List<FileSystemItem>();
                 }
             };
-            tvFilesystem.ParentGetter = obj => ((FileSystemItem) obj).Parent;
+            tvFilesystem.ParentGetter = obj => ((FileSystemItem)obj).Parent;
 
             _tpcolName.ImageGetter = GetIconKey;
 
@@ -63,6 +65,9 @@ namespace ObjectListViewSample
                 long num = (long)val;
                 return num < 0 ? String.Empty : StringHelper.FormatSize(num);
             };
+
+            colProgress.Renderer = new BarTextRenderer(0, 100);
+            colProgress.AspectToStringConverter = value => value + "%";
 
             SetupNameEditing();
 
@@ -83,7 +88,7 @@ namespace ObjectListViewSample
 
             tvFilesystem.CellEditStarting += (sender, e) =>
             {
-                var fsItem = (FileSystemItem) e.RowObject;
+                var fsItem = (FileSystemItem)e.RowObject;
 
                 // don't try to edit roots (drive letters)
                 e.Cancel = fsItem.IsRoot;
@@ -93,7 +98,7 @@ namespace ObjectListViewSample
             // but in this case we need to rename the file, handle/show errors
             _tpcolName.AspectPutter = (fsItem, value) =>
             {
-                string newName = (string) value;
+                string newName = (string)value;
 
                 if (newName == fsItem.Name)
                 {
@@ -146,6 +151,17 @@ namespace ObjectListViewSample
             imageList.Images.Add(key, ImageHelper.Resize(icon.ToBitmap(), imageList.ImageSize));
         }
 
+        private void UpdateControlsState()
+        {
+            btnRemove.Enabled = tvFilesystem.CheckedObjects.Count > 0;
+            btnProcess.Enabled = tvFilesystem.CheckedObjects.Count > 0;
+        }
+
+        private void tvFilesystem_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            UpdateControlsState();
+        }
+
         private void btnRemove_Click(object sender, EventArgs e)
         {
             var items = tvFilesystem.CheckedObjects;
@@ -157,7 +173,7 @@ namespace ObjectListViewSample
             {
                 foreach (FileSystemItem item in items)
                 {
-                    if (item.IsRoot) 
+                    if (item.IsRoot)
                         continue;
 
                     item.Delete();
@@ -168,6 +184,24 @@ namespace ObjectListViewSample
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnProcess_Click(object sender, EventArgs e)
+        {
+            if (!colProgress.IsVisible)
+            {
+                colProgress.IsVisible = true;
+                tvFilesystem.RebuildColumns();
+            }
+
+            var items = tvFilesystem.CheckedObjects;
+
+            var rand = new Random();
+            foreach (FileSystemItem item in items)
+            {
+                item.Progress = rand.Next(0, 100);
+                tvFilesystem.RefreshObject(item);
             }
         }
     }
