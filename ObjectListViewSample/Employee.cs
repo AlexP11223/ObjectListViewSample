@@ -2,7 +2,9 @@
 {
     enum Gender
     {
-        Unknown = 0, Male = 1, Female = 2
+        Unknown = 0,
+        Male = 1,
+        Female = 2
     }
 
     public enum EmployeeState
@@ -13,6 +15,10 @@
 
     class Employee : ObservableObject
     {
+        // SetField из ObservableObject вызывает OnPropertyChanged для оповещения UI об изменении данных и необходимости пеевывода
+        // вместо вызова RefreshObject
+        // http://objectlistview.sourceforge.net/cs/recipes.html#can-i-get-rid-of-the-refreshobject-calls
+        // https://stackoverflow.com/questions/35582162/how-to-implement-inotifypropertychanged-in-c-sharp-6-0
 
         private string _job;
         public string Job

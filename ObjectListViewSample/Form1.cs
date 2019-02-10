@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ObjectListViewSample.Helpers;
@@ -36,6 +31,15 @@ namespace ObjectListViewSample
 
         private void SetupFsTreeView()
         {
+            // http://objectlistview.sourceforge.net/cs/recipes.html#how-do-i-use-checkboxes-in-my-objectlistview
+            // http://objectlistview.sourceforge.net/cs/recipes.html#can-a-treelistview-calculate-checkboxes-based-on-subitems
+            tvFilesystem.CheckBoxes = true;
+            tvFilesystem.HierarchicalCheckboxes = true;
+
+            // http://objectlistview.sourceforge.net/cs/recipes.html#can-the-objectlistview-use-a-selection-scheme-like-vista
+            tvFilesystem.UseTranslucentSelection = true;
+            tvFilesystem.UseTranslucentHotItem = true;
+
             tvFilesystem.CanExpandGetter = obj => ((FileSystemItem)obj).IsDir;
             tvFilesystem.ChildrenGetter = obj =>
             {
@@ -123,6 +127,7 @@ namespace ObjectListViewSample
             };
         }
 
+        // загрузка иконки файла через WinApi и сохранение в imglstIcons
         private string GetIconKey(FileSystemItem fsItem)
         {
             string path = fsItem.FullPath;
@@ -175,6 +180,8 @@ namespace ObjectListViewSample
                 {
                     if (item.IsRoot)
                         continue;
+
+                    tvFilesystem.UncheckObject(item); // bug? removed items remain in CheckedObjects unless unchecked https://sourceforge.net/p/objectlistview/discussion/812922/thread/55c89a56d2/
 
                     item.Delete();
 

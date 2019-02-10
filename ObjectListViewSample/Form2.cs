@@ -73,17 +73,26 @@ namespace ObjectListViewSample
         };
 
         private readonly TypedObjectListView<Employee> _tplstEmployees; // http://objectlistview.sourceforge.net/cs/recipes.html#isn-t-there-are-way-to-get-rid-of-all-the-casts-in-the-delegates
-        
+
         public Form2()
         {
             InitializeComponent();
 
             _tplstEmployees = new TypedObjectListView<Employee>(lstEmployees);
 
+            SetupEmployeeList();
+
+            cbbGender.DataSource = Enum.GetValues(typeof(Gender));
+
+            UpdateControlsState();
+        }
+
+        private void SetupEmployeeList()
+        {
             colFullName.ImageGetter = obj =>
             {
-                var emp = (Employee) obj;
-                
+                var emp = (Employee)obj;
+
                 // показывать иконку пола если нет фото
                 if (String.IsNullOrEmpty(emp.Photo) || !File.Exists(emp.Photo))
                 {
@@ -99,6 +108,7 @@ namespace ObjectListViewSample
                 return emp.Photo;
             };
 
+            // готовый рендерер для заголовка + описания
             colFullName.Renderer = new DescribedTaskRenderer
             {
                 ImageList = imglstPhotos,
@@ -114,10 +124,11 @@ namespace ObjectListViewSample
             // group by the first last name letter
             colFullName.GroupKeyGetter = obj =>
             {
-                var emp = (Employee) obj;
+                var emp = (Employee)obj;
                 return String.IsNullOrWhiteSpace(emp.LastName) ? "" : emp.LastName.Substring(0, 1);
             };
 
+            // готовый рендерер для отображения нескольких иконок вместо числа
             colKpi.Renderer = new MultiImageRenderer("money", 5, 0, 6)
             {
                 Spacing = -12 // overlap
@@ -126,7 +137,7 @@ namespace ObjectListViewSample
             colState.ImageGetter = obj => (obj as Employee)?.State.ToString().ToLower();
             colState.AspectToStringConverter = val =>
             {
-                switch ((EmployeeState) val)
+                switch ((EmployeeState)val)
                 {
                     case EmployeeState.Vacation:
                         return "On vacation";
@@ -137,7 +148,7 @@ namespace ObjectListViewSample
 
             colAction.AspectToStringConverter = val =>
             {
-                switch ((EmployeeState) val)
+                switch ((EmployeeState)val)
                 {
                     case EmployeeState.Working:
                         return "Take a vacation";
@@ -149,7 +160,7 @@ namespace ObjectListViewSample
             };
             lstEmployees.ButtonClick += (sender, e) =>
             {
-                var emp = (Employee) e.Model;
+                var emp = (Employee)e.Model;
 
                 switch (emp.State)
                 {
@@ -165,10 +176,6 @@ namespace ObjectListViewSample
             };
 
             lstEmployees.SetObjects(_employees);
-
-            cbbGender.DataSource = Enum.GetValues(typeof(Gender));
-
-            UpdateControlsState();
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -221,12 +228,12 @@ namespace ObjectListViewSample
 
             if (chkFilterHighKpi.Checked)
             {
-                filters.Add(new ModelFilter(obj => ((Employee) obj).Kpi > 3));
+                filters.Add(new ModelFilter(obj => ((Employee)obj).Kpi > 3));
             }
 
             if (chkFilterVacation.Checked)
             {
-                filters.Add(new ModelFilter(obj => ((Employee) obj).State == EmployeeState.Vacation));
+                filters.Add(new ModelFilter(obj => ((Employee)obj).State == EmployeeState.Vacation));
             }
 
             if (!String.IsNullOrWhiteSpace(tboxFilter.Text))
@@ -263,7 +270,7 @@ namespace ObjectListViewSample
 
         private void cbbGender_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _tplstEmployees.SelectedObject.Gender = (Gender) cbbGender.SelectedItem;
+            _tplstEmployees.SelectedObject.Gender = (Gender)cbbGender.SelectedItem;
         }
 
         private void btnBrowsePhoto_Click(object sender, EventArgs e)
@@ -289,7 +296,7 @@ namespace ObjectListViewSample
 
         private void numKpi_ValueChanged(object sender, EventArgs e)
         {
-            _tplstEmployees.SelectedObject.Kpi = (int) numKpi.Value; 
+            _tplstEmployees.SelectedObject.Kpi = (int)numKpi.Value;
         }
 
         private void tboxFilter_TextChanged(object sender, EventArgs e)
@@ -318,7 +325,7 @@ namespace ObjectListViewSample
 
         private void lstEmployees_FormatRow(object sender, FormatRowEventArgs e)
         {
-            var emp = (Employee) e.Model;
+            var emp = (Employee)e.Model;
 
             if (chkHighlightLowKpi.Checked)
             {
