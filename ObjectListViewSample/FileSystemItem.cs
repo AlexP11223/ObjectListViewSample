@@ -6,10 +6,8 @@ using ObjectListViewSample.Helpers;
 
 namespace ObjectListViewSample
 {
-    class FileSystemItem : ObservableObject
+    class FileSystemItem
     {
-        private string _name;
-        private FileSystemItem _parent;
         private List<FileSystemItem> _children;
 
         public FileSystemItem(string rootPath)
@@ -20,30 +18,20 @@ namespace ObjectListViewSample
 
         private FileSystemItem(FileSystemItem parent, string name)
         {
-            _parent = parent;
+            Parent = parent;
             Name = name;
             IsDir = Directory.Exists(FullPath);
         }
 
-        public string FullPath => _parent == null ? Name : Path.Combine(ParentFullPath, Name);
+        public string FullPath => Parent == null ? Name : Path.Combine(ParentFullPath, Name);
 
-        public string Name
-        {
-            get => _name;
-            private set
-            {
-                SetField(ref _name, value);
-                OnPropertyChanged(nameof(FullPath));
+        public string Name { get; private set; }
 
-                UpdateChildren();
-            }
-        }
+        public string ParentFullPath => Parent?.FullPath;
 
-        public string ParentFullPath => _parent?.FullPath;
+        public FileSystemItem Parent { get; }
 
-        public FileSystemItem Parent => _parent;
-
-        public bool IsRoot => _parent == null;
+        public bool IsRoot => Parent == null;
 
         public bool IsDir { get; }
 
@@ -73,12 +61,7 @@ namespace ObjectListViewSample
             }
         }
 
-        private int _progress;
-        public int Progress // not used (only for dummy progress bar demo)
-        {
-            get => _progress;
-            set => SetField(ref _progress, value);
-        }
+        public int Progress { get; set; } // not used (only for dummy progress bar demo)
 
         public void Rename(string newName)
         {
@@ -113,26 +96,12 @@ namespace ObjectListViewSample
                 File.Delete(FullPath);
             }
 
-            _parent._children = null; // need to refresh
+            Parent._children = null; // need to refresh
         }
 
         public override string ToString()
         {
             return Name;
-        }
-
-        // probably not really needed since we don't bind to full paths
-        private void UpdateChildren()
-        {
-            if (_children == null)
-                return;
-
-            foreach (var child in _children)
-            {
-                child.OnPropertyChanged(nameof(FullPath));
-                child.OnPropertyChanged(nameof(ParentFullPath));
-                child.UpdateChildren();
-            }
         }
     }
 }

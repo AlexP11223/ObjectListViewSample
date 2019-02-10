@@ -71,7 +71,6 @@
             this.tvFilesystem.TabIndex = 0;
             this.tvFilesystem.UseCompatibleStateImageBehavior = false;
             this.tvFilesystem.UseHotItem = true;
-            this.tvFilesystem.UseNotifyPropertyChanged = true;
             this.tvFilesystem.UseTranslucentHotItem = true;
             this.tvFilesystem.UseTranslucentSelection = true;
             this.tvFilesystem.View = System.Windows.Forms.View.Details;
