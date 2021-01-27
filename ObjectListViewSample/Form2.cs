@@ -93,13 +93,13 @@ namespace ObjectListViewSample
             {
                 var emp = (Employee)obj;
 
-                // показывать иконку пола если нет фото
+                // show a gender icon if no photo
                 if (String.IsNullOrEmpty(emp.Photo) || !File.Exists(emp.Photo))
                 {
                     return (obj as Employee)?.Gender.ToString().ToLower();
                 }
 
-                // загрузить фото если еще не загружено
+                // load photo from the file if not loaded yet
                 if (!imglstPhotos.Images.ContainsKey(emp.Photo))
                 {
                     imglstPhotos.Images.Add(emp.Photo, Bitmap.FromFile(emp.Photo));
@@ -108,7 +108,7 @@ namespace ObjectListViewSample
                 return emp.Photo;
             };
 
-            // готовый рендерер для заголовка + описания
+            // a render for big title + smaller description below
             colFullName.Renderer = new DescribedTaskRenderer
             {
                 ImageList = imglstPhotos,
@@ -128,7 +128,7 @@ namespace ObjectListViewSample
                 return String.IsNullOrWhiteSpace(emp.LastName) ? "" : emp.LastName.Substring(0, 1);
             };
 
-            // готовый рендерер для отображения нескольких иконок вместо числа
+            // a renderer displaying multiple images instead of a number (like stars in ratings)
             colKpi.Renderer = new MultiImageRenderer("money", 5, 0, 6)
             {
                 Spacing = -12 // overlap
